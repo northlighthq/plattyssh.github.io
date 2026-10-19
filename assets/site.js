@@ -1836,7 +1836,7 @@
         // Every build so far is a pre-release, which /releases/latest skips, so take the newest from the list.
         const res = await fetch("https://api.github.com/repos/PlattySSH/platty/releases?per_page=20", { headers: { Accept: "application/vnd.github+json" } });
         if (!res.ok) return;
-        const list = (await res.json()).filter((r) => !r.draft && r.assets.some((a) => /setup\.exe$/i.test(a.name)));
+        const list = (await res.json()).filter((r) => !r.draft && r.tag_name.startsWith("v") && r.assets.some((a) => /setup\.exe$/i.test(a.name)));
         if (!list.length) return;
         const r = list[0];
         rel = { tag: r.tag_name, url: r.html_url, assets: r.assets.map((a) => ({ name: a.name, size: a.size, url: a.browser_download_url })) };
