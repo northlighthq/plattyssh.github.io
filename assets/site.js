@@ -134,7 +134,7 @@
       ["staging", "ana@staging.example.com"],
       ["raspberry", "pi@192.168.1.40"],
       ["nas", "admin@192.168.1.10"],
-      ["demo-server", "platty@127.0.0.1:64525"],
+      ["demo-server", "boreal@127.0.0.1:64525"],
     ];
     const SNIPPETS = [
       ["Restart nginx", "sudo systemctl restart nginx", [
@@ -162,7 +162,7 @@
       ["New host", "", "host"],
       ["Open SFTP", "", "sftp"],
       ["Open keychain", "", "keychain"],
-      ["Lock Platty", "Ctrl+Shift+L", "lock"],
+      ["Lock Boreal", "Ctrl+Shift+L", "lock"],
     ];
     const all = [
       ...HOSTS.map(([name, detail]) => ({ kind: "host", group: "Hosts", icon: "term", name, detail })),
@@ -659,7 +659,7 @@
         case "nano":
         case "htop":
         case "top":
-          return [`<span class="t-d">${esc(c)} needs a real server. Platty is one download away.</span>`];
+          return [`<span class="t-d">${esc(c)} needs a real server. Boreal is one download away.</span>`];
         default:
           return [`${esc(c)}: command not found`];
       }
@@ -1038,7 +1038,7 @@
       "/": [D(".ssh"), D("app"), D("backups"), D("logs"), D("nginx"), F(".bashrc", 3.7 * KB), F(".env", 412), F("backup-2026-10-01.tar.gz", 46 * MB), F("deploy.sh", 2.2 * KB, 1), F("docker-compose.yml", 1.8 * KB), F("Makefile", 964), F("README.md", 5 * KB)],
       "/.ssh": [F("authorized_keys", 1.2 * KB), F("config", 220), F("known_hosts", 3.4 * KB)],
       "/app": [D("bin"), D("static"), F("config.yaml", 1.1 * KB), F("server", 18.4 * MB, 1)],
-      "/app/bin": [F("platty-agent", 9.2 * MB, 1)],
+      "/app/bin": [F("boreal-agent", 9.2 * MB, 1)],
       "/app/static": [F("app.css", 22.7 * KB), F("app.js", 88.3 * KB), F("index.html", 4.1 * KB)],
       "/backups": [F("backup-2026-09-24.tar.gz", 45.1 * MB), F("backup-2026-10-01.tar.gz", 46 * MB)],
       "/logs": [F("access.log", 12.4 * MB), F("error.log", 88 * KB), F("worker.log", 2.3 * MB)],
@@ -1221,7 +1221,7 @@
     list.addEventListener("dblclick", (e) => {
       const btn = e.target.closest("button.sf-row");
       const f = btn && fs[cwd].find((x) => x.name === btn.dataset.name);
-      if (f && !f.dir) toast(`Opened ${f.name} in your editor`, "Save it and Platty uploads it back.");
+      if (f && !f.dir) toast(`Opened ${f.name} in your editor`, "Save it and Boreal uploads it back.");
     });
 
     pathIn.addEventListener("keydown", (e) => {
@@ -1510,7 +1510,7 @@
     demos.host = { root, focus: () => $("addr").focus({ preventScroll: true }) };
   }
 
-  /* Sol, ported from Platty's internal/ui/mascot so it moves like it does in the app. */
+  /* Sol, ported from Boreal's internal/ui/mascot so it moves like it does in the app. */
 
   const SOL_PERIOD = 4.2;
   const SOL_WAVES = 7;
@@ -1691,11 +1691,11 @@
       "Double-click a tab to rename it. Drag it to reorder, or right-click it to duplicate it.",
       "Give a host an On connect command, like `tmux attach`, and it runs as soon as the shell opens.",
       "Got a YubiKey? Load it with `ssh-add` and pick the Agent sign-in method for the host.",
-      "Drag files from Explorer onto a session to upload them. Edit a remote file and Platty uploads it every time you save.",
-      "[Ctrl+Shift+L] locks Platty. It also locks itself when you step away for a while.",
+      "Drag files from Explorer onto a session to upload them. Edit a remote file and Boreal uploads it every time you save.",
+      "[Ctrl+Shift+L] locks Boreal. It also locks itself when you step away for a while.",
       "[Ctrl+Shift+F] searches the scrollback, and [Ctrl+click] opens links, OSC 8 ones included.",
-      "Settings → Data → Export makes an encrypted `.platty` backup. Passwords stay out unless you add them.",
-      "Sharing a screenshot? Platty can hide IP addresses on screen.",
+      "Settings → Data → Export makes an encrypted `.boreal` backup. Passwords stay out unless you add them.",
+      "Sharing a screenshot? Boreal can hide IP addresses on screen.",
       "[Alt+2] opens the keychain, and [Alt+6] the SFTP panel while you're in a session.",
       "Turn on Forward my SSH agent in a host's advanced options to `git pull` there with your own keys. Only on servers you trust.",
       "Add the OSC 7 snippet from the docs to your `~/.bashrc` and the SFTP panel follows your terminal's folder.",
@@ -1826,7 +1826,7 @@
   async function releases() {
     const note = document.querySelector(".hero-release");
     if (!note) return;
-    const KEY = "platty-release";
+    const KEY = "boreal-release";
     let rel = null;
     try {
       rel = JSON.parse(sessionStorage.getItem(KEY));
@@ -1834,7 +1834,7 @@
     if (!rel) {
       try {
         // Every build so far is a pre-release, which /releases/latest skips, so take the newest from the list.
-        const res = await fetch("https://api.github.com/repos/PlattySSH/platty/releases?per_page=20", { headers: { Accept: "application/vnd.github+json" } });
+        const res = await fetch("https://api.github.com/repos/northlighthq/boreal/releases?per_page=20", { headers: { Accept: "application/vnd.github+json" } });
         if (!res.ok) return;
         const list = (await res.json()).filter((r) => !r.draft && r.tag_name.startsWith("v") && r.assets.some((a) => /setup\.exe$/i.test(a.name)));
         if (!list.length) return;
@@ -1975,7 +1975,7 @@
     const metas = [...document.querySelectorAll(".lib-meta[data-repo]")];
     if (!metas.length) return;
     once(metas[0], () => metas.forEach(async (meta) => {
-      const key = `platty-stars-${meta.dataset.repo}`;
+      const key = `boreal-stars-${meta.dataset.repo}`;
       let stars = null;
       try {
         stars = sessionStorage.getItem(key);
@@ -2208,7 +2208,7 @@
     const P = '<span class="u">deploy@web-01</span>:<span class="p">~</span>$ ';
     const SCRIPT = [
       ["ssh plattyssh.github.io -p 404", ['ssh: connect to host plattyssh.github.io port 404: <span class="r">Connection refused</span>']],
-      [`curl -sI https://plattyssh.github.io${path}`, ['HTTP/2 <span class="r">404</span>', "content-type: text/html; charset=utf-8"]],
+      [`curl -sI https://northlighthq.github.io/plattyssh.github.io${path}`, ['HTTP/2 <span class="r">404</span>', "content-type: text/html; charset=utf-8"]],
     ];
     const lines = [];
     // typed === null means a command is still printing, so there is no prompt yet.
@@ -2576,7 +2576,7 @@
       const items = [["Hosts", 8, true, 0], ["Keys", 4, true, 0], ["Snippets", 12, true, 0], ["Passwords", 6, false, 1], ["Passphrases", 2, false, 1]];
       const kb = { Hosts: 3.1, Keys: 6.4, Snippets: 1.8, Passwords: 0.9, Passphrases: 0.4 };
       el.innerHTML = `<div class="mn-export">
-        <div class="mn-file">${icon("file")}<span>backup.platty</span><span class="size"></span><span class="tag"></span></div>
+        <div class="mn-file">${icon("file")}<span>backup.boreal</span><span class="size"></span><span class="tag"></span></div>
         <div class="mn-checks">${items.map(([n, c, on, secret]) => `<button class="mn-chip${secret ? " secret" : ""}" type="button" role="checkbox" aria-checked="${on}" data-n="${n}">${n} <span>${c}</span></button>`).join("")}</div>
       </div>`;
       const size = el.querySelector(".size");
